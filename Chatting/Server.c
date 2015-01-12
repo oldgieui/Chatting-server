@@ -43,8 +43,7 @@ void send_msg(struct epoll_event ev, char *msg)
 	}
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv){
 	struct sockaddr_in addr, clientaddr;
 	struct epoll_event ev;
 	struct epoll_event* events;
@@ -58,6 +57,9 @@ int main(int argc, char** argv)
 
 	char* idtable = "Dog\0Cat\0Pet\0Man\0Boy\0Guy\0Cap\0Tim\0";
 
+	printf("Server started. Port Number : %d.\n"
+			"Turn on the client programs to start chatting.\n", PORT);
+
 	events = (struct epoll_event*)malloc(sizeof(struct epoll_event) * POLLSIZE);
 	if((epollfd = epoll_create(100)) == -1)
 	{
@@ -69,6 +71,7 @@ int main(int argc, char** argv)
 	{
 		return 1;
 	}
+
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	addr.sin_port = htons(PORT);
@@ -84,6 +87,10 @@ int main(int argc, char** argv)
 
 	while(1)
 	{
+		int n = getchar();
+		if(n == 0){
+			break;
+		}
 		eventn = epoll_wait(epollfd, events, POLLSIZE, -1);
 		if(eventn == -1)
 		{

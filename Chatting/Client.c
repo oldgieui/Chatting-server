@@ -17,8 +17,7 @@
 
 #define MAXLINE 1024
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
 	int socketfd;
 	struct sockaddr_in sockaddr;
 	int socklen;
@@ -28,13 +27,11 @@ int main(int argc, char** argv)
 	char buf[MAXLINE];
 	int readn, writen;
 
-	if(argc != 3)
-	{
+	if (argc != 3) {
 		printf("%s [target ip address] [port number]\n", argv[0]);
 		return 1;
 	}
-	if((socketfd = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
-	{
+	if ((socketfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 		perror("socket failed;;\n");
 		return 1;
 	}
@@ -44,8 +41,7 @@ int main(int argc, char** argv)
 	sockaddr.sin_port = htons(atoi(argv[2]));
 
 	socklen = sizeof(sockaddr);
-	if(connect(socketfd, (struct sockaddr*) &sockaddr, socklen) == -1)
-	{
+	if (connect(socketfd, (struct sockaddr*) &sockaddr, socklen) == -1) {
 		perror("connect failed..");
 		return 1;
 	}
@@ -57,36 +53,29 @@ int main(int argc, char** argv)
 	maxfd = socketfd;
 	oldfds = readfds;
 
-	while(1)
-	{
+	while (1) {
 		readfds = oldfds;
 		fd_num = select(maxfd + 1, &readfds, NULL, NULL, NULL);
-		if(FD_ISSET(socketfd, &readfds))
-		{
+		if (FD_ISSET(socketfd, &readfds)) {
 			memset(buf, 0x00, MAXLINE);
 			readn = read(socketfd, buf, MAXLINE);
-			if(readn <= 0)
-			{
+			if (readn <= 0) {
 				return 1;
 			}
 			writen = write(1, buf, readn);
-			if(writen != readn)
-			{
+			if (writen != readn) {
 				return 1;
 			}
 		}
-		if(FD_ISSET(0, &readfds))
-		{
+		if (FD_ISSET(0, &readfds)) {
 			memset(buf, 0x00, MAXLINE);
 			readn = read(0, buf, MAXLINE);
 
-			if(readn <= 0)
-			{
+			if (readn <= 0) {
 				return 1;
 			}
 			writen = write(socketfd, buf, readn);
-			if(readn != writen)
-			{
+			if (readn != writen) {
 				return 1;
 			}
 		}
